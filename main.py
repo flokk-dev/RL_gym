@@ -10,7 +10,7 @@ Purpose:
 import argparse
 
 # IMPORT: projet
-from src import Trainer
+from src import Trainer, Inferencer
 
 # WARNINGS SHUT DOWN
 import warnings
@@ -20,11 +20,14 @@ warnings.filterwarnings("ignore")
 def get_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Reinforcement learning module.")
 
+    parser.add_argument("-p", "--pipe", type=str, nargs="?", default="train",
+                        choices=["train", "inference"], help="the pipeline to run.")
+
     parser.add_argument("-m", "--model", type=str, nargs="?", default="DQN",
-                        choices=["DQN", "A2C"], help="the number of iteration")
+                        choices=["DQN", "A2C"], help="the name of the model.")
 
     parser.add_argument("-g", "--game", type=str, nargs="?", default="ALE/Breakout-v5",
-                        choices=["ALE/Breakout-v5"], help="the number of iteration")
+                        choices=["ALE/Breakout-v5"], help="the game to train on.")
 
     parser.add_argument("-w", "--weights", type=str, nargs="?", default=None,
                         help="the weights to load")
@@ -43,5 +46,10 @@ if __name__ == "__main__":
     args = get_args()
 
     # Train
-    trainer = Trainer(model_name=args.model, game=args.game)
-    trainer.train(nb_iter=args.iter)
+    if args.pipe == "train":
+        trainer = Trainer(model_name=args.model, game=args.game)
+        trainer.launch(nb_iter=args.iter)
+    elif args.pipe == "inference":
+        inferencer = Inferencer(model_name=args.model, game=args.game, weights_path=args.weights)
+        inferencer.launch()
+

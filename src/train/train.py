@@ -56,7 +56,7 @@ class Trainer:
             self._model = self._MODELS[model_name](**model_config[model_name], env=self._env,
                                                    device=self._DEVICE)
 
-    def train(self, nb_iter):
+    def launch(self, nb_iter):
         checks = CheckpointCallback(save_freq=nb_iter // 10,
                                     save_path=self._save_paths["checks_path"], name_prefix="model")
 

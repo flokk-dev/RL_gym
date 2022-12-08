@@ -8,40 +8,75 @@ Purpose:
 
 # IMPORT: utils
 import os
-
 from tqdm import tqdm
 
-# IMPORT: data processing/visualization
-import numpy as np
+# IMPORT: image processing
+import cv2
+
+# IMPORT: deep learning
+import torch
+
+# IMPORT: reinforcement learning
+import gym
+from gym.utils.env_checker import check_env
+
+from stable_baselines3 import DQN, A2C
+
+# IMPORT: project
+import paths
 
 
-def inference(self, nb_episodes=10):
-    print()
+class Inferencer:
+    _MODELS = {"DQN": DQN, "A2C": A2C}
+    _DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
 
-    rewards = list()
-    mean_reward = list()
+    def __init__(self, model_name, game, weights_path):
+        # Save paths
+        weights_path_folder = weights_path.split("/")[-2]
+        self._save_paths = {
+            "results_path": os.path.join(paths.RESULTS_PATH, weights_path_folder)
+        }
 
-    cpt = 0
-    for i in tqdm(range(nb_episodes), desc="Inférence en cours, veuillez patienter..."):
-        self._env.reset()
-        done = False
+        for key, path in self._save_paths.items():
+            if not os.path.exists(path):
+                os.makedirs(path)
 
+        # Record
+        writer = cv2.VideoWriter_fourcc(*"mp4v")
+        self._writer = cv2.VideoWriter(os.path.join(self._save_paths["results_path"], "output.mp4"),
+                                       writer, 30.0, (160, 210), True)
+
+        # Environment
+        self._env = gym.make(game)
+        check_env(self._env)
+
+        # Model
+        self._model = self._MODELS[model_name].load(weights_path, env=self._env,
+                                                    device=self._DEVICE)
+
+    def launch(self):
+        obs = self._env.reset()
+        done = None
+
+        p_bar = tqdm()
         while not done:
-            obs, reward, done, info = self._env.step(self._env.action_space.sample())
+            # Predict an action
+            action, _state = self._model.predict(obs, deterministic=True)
+            obs, reward, done, info = self._env.step(action)
 
-            rewards.append(reward)
-            if cpt % 1000 == 0:
-                mean_reward.append(np.mean(rewards))
+            # Display and save img
+            img = self._env.render(mode="rgb_array")
+            img_alone = img[:210, :160, :]
 
-            cpt += 1
+            cv2.imshow("game", img)
+            cv2.waitKey(130)
 
-    self._env.close()
+            self._writer.write(img_alone)
 
-    # SAVE RESULTS
-    self._save_results(file_name=os.path.join(self._results_path, "rewards.png"),
-                       values=rewards,
-                       title="rewards", x_label="iterations", y_label="rewards")
+            # Update progress bar
+            p_bar.update(1)
 
-    self._save_results(file_name=os.path.join(self._results_path, "mean_reward.png"),
-                       values=mean_reward,
-                       title="mean reward", x_label="iterations", y_label="mean reward")
+        self._env.reset()
+
+        self._writer.release()
+        cv2.destroyAllWindows()
