@@ -13,7 +13,7 @@ import os
 """
 ROOT
 """
-ROOT_PATH = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "projet")
+ROOT_PATH = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "gym_RL")
 
 
 """
