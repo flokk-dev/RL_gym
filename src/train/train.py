@@ -24,18 +24,21 @@ from stable_baselines3.common.env_util import make_atari_env
 
 # IMPORT: project
 import paths
+from utils import game_name
 
 
 class Trainer:
     _MODELS = {"DQN": DQN, "A2C": A2C}
     _DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
 
-    def __init__(self, model_name, game, weights_path=None):
+    def __init__(self, model_name, game_id, weights_path=None):
         # Save paths
         creation_time = datetime.datetime.now().strftime("%Y-%m-%d-%H-%M-%S")
+        folder_name = f"{creation_time}_{game_name(game_id)}"
+
         self._save_paths = {
-            "model_path": os.path.join(paths.MODELS_PATH, f"{creation_time}_{game.split('/')[1]}"),
-            "checks_path": os.path.join(paths.MODELS_PATH, creation_time, "checkpoints"),
+            "model_path": os.path.join(paths.MODELS_PATH, folder_name),
+            "checks_path": os.path.join(paths.MODELS_PATH, folder_name, "checkpoints"),
         }
 
         for key, path in self._save_paths.items():
@@ -43,7 +46,7 @@ class Trainer:
                 os.makedirs(path)
 
         # Environment
-        self._env = make_atari_env(game, n_envs=16)
+        self._env = make_atari_env(game_id, n_envs=16)
         self._env = VecFrameStack(self._env, n_stack=4)
 
         # Model

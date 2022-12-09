@@ -29,7 +29,7 @@ class Inferencer:
     _MODELS = {"DQN": DQN, "A2C": A2C}
     _DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
 
-    def __init__(self, model_name, game, weights_path):
+    def __init__(self, model_name, game_id, weights_path):
         # Save paths
         weights_path_folder = weights_path.split("/")[-2]
         self._save_paths = {
@@ -46,7 +46,8 @@ class Inferencer:
                                        writer, 30.0, (160, 210), True)
 
         # Environment
-        self._env = make_atari_env(game, n_envs=1)
+        self._env = make_atari_env(game_id, n_envs=16)
+        self._env = VecFrameStack(self._env, n_stack=4)
 
         # Model
         self._model = self._MODELS[model_name].load(weights_path, env=self._env,

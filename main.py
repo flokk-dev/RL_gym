@@ -48,9 +48,9 @@ if __name__ == "__main__":
 
     # Train
     if args.pipe == "train":
-        trainer = Trainer(model_name=args.model, game=args.game)
+        trainer = Trainer(model_name=args.model, game_id=args.game)
         trainer.launch(nb_iter=args.iter)
     elif args.pipe == "inference":
-        inferencer = Inferencer(model_name=args.model, game=args.game, weights_path=args.weights)
+        inferencer = Inferencer(model_name=args.model, game_id=args.game, weights_path=args.weights)
         inferencer.launch()
 

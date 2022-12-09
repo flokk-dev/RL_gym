@@ -1,0 +1,14 @@
+"""
+Creator: Flokk___
+Date: 18/11/2022
+Version: V1.0
+
+Purpose:
+"""
+
+# IMPORT: utils
+import os
+
+
+def game_name(game_id: str):
+    return game_id.split("/")[1].split("-")[0]
