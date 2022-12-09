@@ -24,7 +24,7 @@ from stable_baselines3.common.env_util import make_atari_env
 
 # IMPORT: project
 import paths
-from utils import game_name
+from utils import get_game_name
 
 
 class Trainer:
@@ -34,7 +34,7 @@ class Trainer:
     def __init__(self, model_name, game_id, weights_path=None):
         # Save paths
         creation_time = datetime.datetime.now().strftime("%Y-%m-%d-%H-%M-%S")
-        folder_name = f"{creation_time}_{game_name(game_id)}"
+        folder_name = f"{creation_time}_{get_game_name(game_id)}"
 
         self._save_paths = {
             "model_path": os.path.join(paths.MODELS_PATH, folder_name),

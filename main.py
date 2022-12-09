@@ -7,6 +7,7 @@ Purpose:
 """
 
 # IMPORT: utils
+import os
 import argparse
 
 # IMPORT: projet
@@ -46,11 +47,14 @@ if __name__ == "__main__":
     # Parameters
     args = get_args()
 
+    if not os.path.exists(args.weights):
+        raise ValueError("Le chemin de fichier spécifié pour les weights n'existe pas.")
+
     # Train
     if args.pipe == "train":
         trainer = Trainer(model_name=args.model, game_id=args.game)
         trainer.launch(nb_iter=args.iter)
-    elif args.pipe == "inference":
-        inferencer = Inferencer(model_name=args.model, game_id=args.game, weights_path=args.weights)
-        inferencer.launch()
 
+    elif args.pipe == "inference":
+        inferencer = Inferencer(model_name=args.model, weights_path=args.weights)
+        inferencer.launch()
