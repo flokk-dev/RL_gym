@@ -34,7 +34,7 @@ class Trainer:
         # Save paths
         creation_time = datetime.datetime.now().strftime("%Y-%m-%d-%H-%M-%S")
         self._save_paths = {
-            "model_path": os.path.join(paths.MODELS_PATH, creation_time),
+            "model_path": os.path.join(paths.MODELS_PATH, f"{creation_time}_{game.split('/')[1]}"),
             "checks_path": os.path.join(paths.MODELS_PATH, creation_time, "checkpoints"),
         }
 
