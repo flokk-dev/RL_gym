@@ -27,7 +27,8 @@ def get_args() -> argparse.Namespace:
                         choices=["DQN", "A2C"], help="the name of the model.")
 
     parser.add_argument("-g", "--game", type=str, nargs="?", default="ALE/Breakout-v5",
-                        choices=["ALE/Breakout-v5"], help="the game to train on.")
+                        choices=["ALE/Breakout-v5", "ALE/Boxing-v5", "ALE/Pong-v5"],
+                        help="the game to train on.")
 
     parser.add_argument("-w", "--weights", type=str, nargs="?", default=None,
                         help="the weights to load")

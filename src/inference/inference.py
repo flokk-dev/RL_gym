@@ -17,10 +17,9 @@ import cv2
 import torch
 
 # IMPORT: reinforcement learning
-import gym
-from gym.utils.env_checker import check_env
-
 from stable_baselines3 import DQN, A2C
+from stable_baselines3.common.vec_env import VecFrameStack
+from stable_baselines3.common.env_util import make_atari_env
 
 # IMPORT: project
 import paths
@@ -47,8 +46,7 @@ class Inferencer:
                                        writer, 30.0, (160, 210), True)
 
         # Environment
-        self._env = gym.make(game)
-        check_env(self._env)
+        self._env = make_atari_env(game, n_envs=1)
 
         # Model
         self._model = self._MODELS[model_name].load(weights_path, env=self._env,

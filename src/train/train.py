@@ -16,11 +16,11 @@ import datetime
 import torch
 
 # IMPORT: reinforcement learning
-import gym
-from gym.utils.env_checker import check_env
-
 from stable_baselines3 import DQN, A2C
 from stable_baselines3.common.callbacks import CheckpointCallback
+
+from stable_baselines3.common.vec_env import VecFrameStack
+from stable_baselines3.common.env_util import make_atari_env
 
 # IMPORT: project
 import paths
@@ -43,8 +43,8 @@ class Trainer:
                 os.makedirs(path)
 
         # Environment
-        self._env = gym.make(game)
-        check_env(self._env)
+        self._env = make_atari_env(game, n_envs=16)
+        self._env = VecFrameStack(self._env, n_stack=4)
 
         # Model
         if weights_path:
