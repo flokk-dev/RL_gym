@@ -46,8 +46,8 @@ class Trainer:
                 os.makedirs(path)
 
         # Environment
-        self._env = make_atari_env(game_id, n_envs=16)
-        self._env = VecFrameStack(self._env, n_stack=4)
+        self._env = make_atari_env(game_id, n_envs=1)
+        # self._env = VecFrameStack(self._env, n_stack=4)
 
         # Model
         if weights_path:

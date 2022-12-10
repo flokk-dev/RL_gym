@@ -10,7 +10,8 @@ Purpose:
 import os
 from tqdm import tqdm
 
-# IMPORT: image processing
+# IMPORT: data processing
+import numpy as np
 import cv2
 
 # IMPORT: deep learning
@@ -58,10 +59,10 @@ class Inferencer:
 
     def launch(self):
         obs = self._env.reset()
-        done = None
+        done = np.array([False])
 
         p_bar = tqdm()
-        while not done:
+        while not done.all():
             # Predict an action
             action, _state = self._model.predict(obs, deterministic=True)
             obs, reward, done, info = self._env.step(action)
