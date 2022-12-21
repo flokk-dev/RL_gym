@@ -46,17 +46,22 @@ class Trainer:
                 os.makedirs(path)
 
         # Environment
+        print(game_id)
         self._env = make_atari_env(game_id, n_envs=1)
         # self._env = VecFrameStack(self._env, n_stack=4)
 
         # Model
+        tensorboard_path = os.path.join(paths.MODELS_PATH, folder_name, "tensorboard")
+
         if weights_path:
             self._model = self._MODELS[model_name].load(weights_path, env=self._env,
+                                                        tensorboard_log=tensorboard_path,
                                                         device=self._DEVICE)
         else:
             with open(paths.CONFIG_PATH) as config_file:
                 model_config = json.load(config_file)
             self._model = self._MODELS[model_name](**model_config[model_name], env=self._env,
+                                                   tensorboard_log=tensorboard_path,
                                                    device=self._DEVICE)
 
     def launch(self, nb_iter):
@@ -64,6 +69,6 @@ class Trainer:
                                     save_path=self._save_paths["checks_path"], name_prefix="model")
 
         self._model.learn(total_timesteps=nb_iter, progress_bar=True,
-                          callback=checks, reset_num_timesteps=False)
+                          tb_log_name="run", callback=checks, reset_num_timesteps=False)
 
         self._model.save(path=os.path.join(self._save_paths["model_path"], "model"))

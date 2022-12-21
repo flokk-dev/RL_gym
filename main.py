@@ -47,7 +47,7 @@ if __name__ == "__main__":
     # Parameters
     args = get_args()
 
-    if not os.path.exists(args.weights):
+    if args.weights is not None and not os.path.exists(args.weights):
         raise ValueError("Le chemin de fichier spécifié pour les weights n'existe pas.")
 
     # Train
