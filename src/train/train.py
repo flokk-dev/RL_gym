@@ -46,9 +46,8 @@ class Trainer:
                 os.makedirs(path)
 
         # Environment
-        print(game_id)
-        self._env = make_atari_env(game_id, n_envs=1)
-        # self._env = VecFrameStack(self._env, n_stack=4)
+        self._env = make_atari_env(game_id, n_envs=16)
+        self._env = VecFrameStack(self._env, n_stack=4)
 
         # Model
         tensorboard_path = os.path.join(paths.MODELS_PATH, folder_name, "tensorboard")
@@ -65,7 +64,7 @@ class Trainer:
                                                    device=self._DEVICE)
 
     def launch(self, nb_iter):
-        checks = CheckpointCallback(save_freq=nb_iter // 10,
+        checks = CheckpointCallback(save_freq=(nb_iter // self._env.num_envs) // 10,
                                     save_path=self._save_paths["checks_path"], name_prefix="model")
 
         self._model.learn(total_timesteps=nb_iter, progress_bar=True,

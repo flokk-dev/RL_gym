@@ -33,7 +33,11 @@ class Inferencer:
 
     def __init__(self, model_name, weights_path):
         # Save paths
-        weights_path_folder = weights_path.split("/")[-2]
+        if weights_path.split("/")[-2] == "checkpoints":
+            weights_path_folder = weights_path.split("/")[-3]
+        else:
+            weights_path_folder = weights_path.split("/")[-2]
+
         self._save_paths = {
             "results_path": os.path.join(paths.RESULTS_PATH, weights_path_folder)
         }
@@ -50,8 +54,8 @@ class Inferencer:
         # Environment
         game_id = get_game_id(weights_path_folder.split("_")[1])
 
-        self._env = make_atari_env(game_id, n_envs=1)
-        # self._env = VecFrameStack(self._env, n_stack=4)
+        self._env = make_atari_env(game_id, n_envs=16)
+        self._env = VecFrameStack(self._env, n_stack=4)
 
         # Model
         self._model = self._MODELS[model_name].load(weights_path, env=self._env,
