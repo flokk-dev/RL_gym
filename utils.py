@@ -11,8 +11,8 @@ import os
 
 
 def get_game_name(game_id: str):
-    return game_id.split("/")[1].split("-")[0]
-    # return game_id.split("-")[0]
+    #return game_id.split("/")[1].split("-")[0]
+    return game_id.split("-")[0]
 
 
 def get_game_id(game_name: str):

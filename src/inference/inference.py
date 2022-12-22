@@ -76,7 +76,7 @@ class Inferencer:
             self._writer.write(img[:210, :160])
 
             cv2.imshow("game", img)
-            cv2.waitKey(130)
+            cv2.waitKey(40)
 
             # Update progress bar
             p_bar.update(1)
