@@ -41,7 +41,7 @@ class Inferencer:
         # Record
         writer = cv2.VideoWriter_fourcc(*"mp4v")
         self._writer = cv2.VideoWriter(os.path.join(result_path, "output.mp4"),
-                                       writer, 30.0, (160, 210), True)
+                                       writer, 30.0, (640, 840), True)
 
         # Environment
         self._env = make_atari_env(utils.get_game_id(weights_path), n_envs=16)
@@ -56,19 +56,20 @@ class Inferencer:
         done = np.array([False])
 
         p_bar = tqdm()
-        while not done.all():
+        while True:
             # Predict an action
             action, _state = self._model.predict(obs, deterministic=True)
             obs, reward, done, info = self._env.step(action)
 
             # Display and save image
             img = self._env.render(mode="rgb_array")
-
-            # self._writer.write(img[:210, :160])
-            self._writer.write(img)
+            self._writer.write(img[:210, :160])
 
             # cv2.imshow("game", img)
             # cv2.waitKey(130)
+
+            if done[0] and info[0]["lives"] > 0:
+                break
 
             # Update progress bar
             p_bar.update(1)
