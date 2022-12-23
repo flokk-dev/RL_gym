@@ -69,7 +69,7 @@ class Inferencer:
 
             # Update progress bar
             p_bar.update(1)
-            if p_bar.n == 2000:
+            if done[0]:
                 break
 
         self._env.reset()
