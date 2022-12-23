@@ -53,7 +53,6 @@ class Inferencer:
 
     def launch(self):
         obs = self._env.reset()
-        done = np.array([False])
 
         p_bar = tqdm()
         while True:
@@ -68,11 +67,10 @@ class Inferencer:
             # cv2.imshow("game", img)
             # cv2.waitKey(130)
 
-            if done[0] and info[0]["lives"] > 0:
-                break
-
             # Update progress bar
             p_bar.update(1)
+            if p_bar.n == 2000:
+                break
 
         self._env.reset()
         self._writer.release()
