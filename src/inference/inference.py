@@ -53,6 +53,7 @@ class Inferencer:
 
     def launch(self):
         obs = self._env.reset()
+        real_done = np.zeros((self._env.num_envs, ))
 
         p_bar = tqdm()
         while True:
@@ -69,7 +70,7 @@ class Inferencer:
 
             # Update progress bar
             p_bar.update(1)
-            if done[0]:
+            if done[0] or p_bar.n > 10000:
                 break
 
         self._env.reset()
