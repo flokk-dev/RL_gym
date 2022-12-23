@@ -10,10 +10,11 @@ Purpose:
 import os
 
 
-def get_game_name(game_id: str):
-    return game_id.split("/")[1].split("-")[0]
-    # return game_id.split("-")[0]
+def get_model_folder(path: str):
+    if path.split("/")[-2] == "checkpoints":
+        return path.split("/")[-3]
+    return path.split("/")[-2]
 
 
-def get_game_id(game_name: str):
-    return f"ALE/{game_name}-v5"
+def get_game_id(path: str):
+    return get_model_folder(path).split("_")[1]

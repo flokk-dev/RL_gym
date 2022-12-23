@@ -50,7 +50,7 @@ if __name__ == "__main__":
 
     # Train
     if args.pipe == "train":
-        trainer = Trainer(model_name=args.model, game_id=args.game)
+        trainer = Trainer(game_id=args.game, model_name=args.model, weights_path=args.weights)
         trainer.launch(nb_iter=args.iter)
 
     elif args.pipe == "inference":

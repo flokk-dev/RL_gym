@@ -8,6 +8,7 @@ Purpose:
 
 # IMPORT: utils
 import os
+import time
 from tqdm import tqdm
 
 # IMPORT: data processing
@@ -24,7 +25,7 @@ from stable_baselines3.common.env_util import make_atari_env
 
 # IMPORT: project
 import paths
-from utils import get_game_id
+import utils
 
 
 class Inferencer:
@@ -33,28 +34,17 @@ class Inferencer:
 
     def __init__(self, model_name, weights_path):
         # Save paths
-        if weights_path.split("/")[-2] == "checkpoints":
-            weights_path_folder = weights_path.split("/")[-3]
-        else:
-            weights_path_folder = weights_path.split("/")[-2]
-
-        self._save_paths = {
-            "results_path": os.path.join(paths.RESULTS_PATH, weights_path_folder)
-        }
-
-        for key, path in self._save_paths.items():
-            if not os.path.exists(path):
-                os.makedirs(path)
+        result_path = os.path.join(paths.RESULTS_PATH, utils.get_model_folder(weights_path))
+        if not os.path.exists(result_path):
+            os.makedirs(result_path)
 
         # Record
         writer = cv2.VideoWriter_fourcc(*"mp4v")
-        self._writer = cv2.VideoWriter(os.path.join(self._save_paths["results_path"], "output.mp4"),
+        self._writer = cv2.VideoWriter(os.path.join(result_path, "output.mp4"),
                                        writer, 30.0, (160, 210), True)
 
         # Environment
-        game_id = get_game_id(weights_path_folder.split("_")[1])
-
-        self._env = make_atari_env(game_id, n_envs=16)
+        self._env = make_atari_env(utils.get_game_id(weights_path), n_envs=16)
         self._env = VecFrameStack(self._env, n_stack=4)
 
         # Model
@@ -73,15 +63,16 @@ class Inferencer:
 
             # Display and save image
             img = self._env.render(mode="rgb_array")
-            self._writer.write(img[:210, :160])
 
-            cv2.imshow("game", img)
-            cv2.waitKey(130)
+            # self._writer.write(img[:210, :160])
+            self._writer.write(img)
+
+            # cv2.imshow("game", img)
+            # cv2.waitKey(130)
 
             # Update progress bar
             p_bar.update(1)
 
         self._env.reset()
-
         self._writer.release()
-        cv2.destroyAllWindows()
+        # cv2.destroyAllWindows()
