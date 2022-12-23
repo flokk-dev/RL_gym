@@ -41,7 +41,7 @@ class Inferencer:
         # Record
         writer = cv2.VideoWriter_fourcc(*"mp4v")
         self._writer = cv2.VideoWriter(os.path.join(result_path, "output.mp4"),
-                                       writer, 30.0, (640, 840), True)
+                                       writer, 30.0, (160, 210), True)
 
         # Environment
         self._env = make_atari_env(utils.get_game_id(weights_path), n_envs=16)
