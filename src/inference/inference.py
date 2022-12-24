@@ -58,8 +58,12 @@ class Inferencer:
         p_bar = tqdm()
         while True:
             # Predict an action
-            action, _state = self._model.predict(obs, deterministic=True)
-            obs, reward, done, info = self._env.step(action)
+            try:
+                action, _state = self._model.predict(obs, deterministic=True)
+                obs, reward, done, info = self._env.step(action)
+            except RuntimeError:
+                print("WIN")
+                break
 
             # Display and save image
             img = self._env.render(mode="rgb_array")
@@ -70,9 +74,14 @@ class Inferencer:
 
             # Update progress bar
             p_bar.update(1)
-            if done[0] or p_bar.n > 10000:
+            if info[0]["lives"] == 0:
+                print("LOSE")
                 break
 
-        self._env.reset()
+        try:
+            self._env.reset()
+        except RuntimeError:
+            pass
+
         self._writer.release()
         # cv2.destroyAllWindows()
